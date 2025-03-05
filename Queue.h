@@ -1,16 +1,17 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 //Node Declaration 
-typdedef struct node{
+typedef struct node{
   int range_data;
-  *struct node next;
-} node;
+  struct node* next;
+} Node;
 
-node *front = NULL;
-node *back = NULL;
+Node *front = NULL;
+Node *back = NULL;
 
 void enqueue(int reading){
-  node *temp = malloc(sizeof(node));
+  Node *temp = (Node*)malloc(sizeof(Node));
   temp->range_data = reading;
   if(front == NULL){
     front = temp;
@@ -27,7 +28,7 @@ void enqueue(int reading){
 int dequeue(){
   if(front == back){
     int range_data = front->range_data;
-    node *temp = front;
+    Node *temp = front;
     front = NULL;
     back = NULL;
     free(temp);
@@ -35,7 +36,7 @@ int dequeue(){
   }
   else{
     int range_data = front->range_data;
-    node *temp = front;
+    Node *temp = front;
     front = front->next;
     free(temp);
     return range_data;
