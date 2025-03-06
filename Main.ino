@@ -8,6 +8,8 @@ Servo myservo;
 int pos = 0;    
 
 void setup() {
+  Serial.begin(9600);
+  delay(5000);//5 second delay to guarentee that there is no loss of data before 
   // attaches the servo on pin 2 to the servo object
   myservo.attach(2);  
 }
@@ -22,4 +24,5 @@ void loop() {
     myservo.write(pos);              
     delay(15);                       
   }
+  delay(5);
 }
