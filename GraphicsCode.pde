@@ -44,6 +44,13 @@ void draw(){
     drawText();
 }
 
+void serialEvent(Serial myport){// start reading data from the Serial port
+    // reads the data from the Serial port up to the character '.' and puts it into the String variable "data".
+    data = myPort.readStringUntil('.');
+    data = data.substring(0,data.length()-1);
+    index1 = data.indexOf(",");//finds the comma in the data
+}
+
 void drawRadar(){
     pushMatrix();//push the current transformation matrix onto the matrix stack
     translate(WIDTH/2, HEIGHT/2);//translate to the center of the canvas
