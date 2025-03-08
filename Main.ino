@@ -40,5 +40,3 @@ int calculateDistance(){
   digitalWrite(trigPin, LOW);
   return pulseIn(echoPin, HIGH) * 0.034 / 2;
 }
-//test5
-//test6
