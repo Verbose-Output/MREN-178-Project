@@ -59,3 +59,58 @@ void drawRadar(){
     stroke(98,245,31);//green color
     arc()
 }
+
+/*
+int lineLength = 600;
+
+
+void setup() {
+  size(800, 600);  // Create a 600x600 window
+  background(0);   // Black background
+}
+
+void draw(){
+  drawRadar();
+}
+
+void drawRadar() {
+  background(0);  // Clear the screen each frame
+  translate(width/2, height);  // Move origin to bottom center
+  
+  // Draw radar circles
+  stroke(0, 255, 0);
+  noFill();
+  for (int r = 100; r <= 600; r += 100) {
+    ellipse(0, 0, r*2, r*2);
+  }
+  
+  // Draw radar lines
+  line(0, 0, 0, -600);
+  line(0, 0, -lineLength*cos(PI/6), -lineLength*sin(PI/6));
+  line(0, 0, lineLength*cos(PI/6), -lineLength*sin(PI/6));
+
+  // Example sweeping line (will be controlled by sensor data later
+  float angle = radians(frameCount % 360);
+  if(angle < PI){
+    float x = lineLength * cos(angle);
+    float y = -lineLength * sin(angle);
+    stroke(0, 255, 0);
+    line(0, 0, x, y);
+  }else if (angle > PI){
+    angle = PI - (angle - PI);
+    float x = lineLength * cos(angle);
+    float y = -height * sin(angle);
+    stroke(0, 255, 0);
+    line(0, 0, x, y);
+  }
+}
+
+//void scan(){
+//  float angle = radians(frameCount % 180);
+//  while (angle < 180){
+//    float x = lineLength * cos(angle);
+//    float y = -lineLength * sin(angle);
+//  }
+//}
+
+*/
