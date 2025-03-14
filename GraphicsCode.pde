@@ -1,81 +1,28 @@
-// This is the code that should take input from the serial monitor (we control that output) and use it to create graphics!
-
-import processing.serial.*;//Library for serial communication
-import java.awt.event.KeyEvent;//Library for detecting key presses (reading the serail data?)
-import java.io.IOException;//Library for input/output functions
-
-Serial myPort;  // Create object from Serial class
-
-//Variables:
-const int WIDTH = 1920;
-const int HEIGHT = 1080;
-boolean serialAvailable = false;
-char val;
-int ledPin = 13;
-boolean ledState = false;
-String angle="";
-String distance="";
-String data="";
-String noObject;
-float pixsDistance;
-int iAngle, iDistance;
-int index1=0;
-int index2=0;
-PFont orcFont;
-
-void setup(){
-    String portName = Serial.list()[0];//change the 0 to a 1 or 2 etc. to match your port
-    myPort = new Serial(this, portName, 9600);
-    myPort.bufferUntil('.');//Should read the serail up to.
-    size(WIDTH, HEIGHT);
-    smooth();
-    establishContact();
-}
-
-void draw(){
-    fill (98,245,31);
-    noStroke();
-    fill(0,4);
-    rect(0, 0, WIDTH, 1010);
-    fill(98,245,31);
-    drawRadar();
-    drawLine();
-    drawObject();
-    drawText();
-}
-
-void serialEvent(Serial myport){// start reading data from the Serial port
-    // reads the data from the Serial port up to the character '.' and puts it into the String variable "data".
-    data = myPort.readStringUntil('.');
-    data = data.substring(0,data.length()-1);
-    index1 = data.indexOf(",");//finds the comma in the data
-}
-
-void drawRadar(){
-    pushMatrix();//push the current transformation matrix onto the matrix stack
-    translate(WIDTH/2, HEIGHT/2);//translate to the center of the canvas
-    noFill();
-    strokeWeight(2);
-    stroke(98,245,31);//green color
-    arc()
-}
-
-/*
 int lineLength = 600;
 
+ArrayList<PVector> trail = new ArrayList<>();  // Creates a dynamic array that data of type "PVector" which is a built in class in java/pocessing
+ArrayList<Float> opacities = new ArrayList<>();  // Stores their opacities
+
+float x;
+float y;
 
 void setup() {
-  size(800, 600);  // Create a 600x600 window
-  background(0);   // Black background
+  size(800, 600);
+  background(0);
 }
 
 void draw(){
+  // Draw a translucent black overlay for fading effect
+  fill(0, 20); // The lower the value, the longer the trail lingers
+  noStroke();
+  rect(0, 0, width, height);
+  
   drawRadar();
+  delay(20); // Adjust delay for smoother effect
 }
 
 void drawRadar() {
-  background(0);  // Clear the screen each frame
-  translate(width/2, height);  // Move origin to bottom center
+  translate(width/2, height);
   
   // Draw radar circles
   stroke(0, 255, 0);
@@ -84,33 +31,53 @@ void drawRadar() {
     ellipse(0, 0, r*2, r*2);
   }
   
-  // Draw radar lines
+  // Draw static radar lines
   line(0, 0, 0, -600);
   line(0, 0, -lineLength*cos(PI/6), -lineLength*sin(PI/6));
   line(0, 0, lineLength*cos(PI/6), -lineLength*sin(PI/6));
 
-  // Example sweeping line (will be controlled by sensor data later
+  // Calculate current sweeping line position
   float angle = radians(frameCount % 360);
   if(angle < PI){
     float x = lineLength * cos(angle);
     float y = -lineLength * sin(angle);
     stroke(0, 255, 0);
+    strokeWeight(2);
     line(0, 0, x, y);
   }else if (angle > PI){
     angle = PI - (angle - PI);
     float x = lineLength * cos(angle);
     float y = -height * sin(angle);
     stroke(0, 255, 0);
+    strokeWeight(2);
     line(0, 0, x, y);
   }
+  
+  // Add new position to trail
+  trail.add(new PVector(x, y));
+  opacities.add(255.0);  // Start with full opacity
+  
+  // Draw the fading trail
+  for (int i = 0; i < trail.size(); i++) {
+    PVector p = trail.get(i);
+    float alpha = opacities.get(i);
+    
+    stroke(0, 255, 0, alpha);
+    strokeWeight(map(dist(0, 0, p.x, p.y), 0, lineLength, 1, 5)); // Increase thickness outward
+    line(0, 0, p.x, p.y);
+    
+    // Reduce opacity for fading effect
+    opacities.set(i, alpha - 5);
+  }
+
+  // Remove fully transparent points
+  while (!opacities.isEmpty() && opacities.get(0) <= 0) {
+    trail.remove(0);
+    opacities.remove(0);
+  }
+
+  // Draw the main sweeping line
+  //stroke(0, 255, 0);
+  //strokeWeight(2);
+  //line(0, 0, x, y);
 }
-
-//void scan(){
-//  float angle = radians(frameCount % 180);
-//  while (angle < 180){
-//    float x = lineLength * cos(angle);
-//    float y = -lineLength * sin(angle);
-//  }
-//}
-
-*/
