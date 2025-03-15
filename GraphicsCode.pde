@@ -24,7 +24,7 @@ void draw(){
   rect(0, 0, width, height);
   
   drawRadar();
-  delay(20); // Adjust delay for smoother effect
+  delay(30); // Adjust delay for smoother effect
 }
 
 void drawRadar() {
@@ -73,22 +73,22 @@ void drawRadar() {
     line(0, 0, p.x, p.y);
     
     // Reduce opacity for fading effect
-    opacities.set(i, alpha - 5);
+    opacities.set(i, alpha - 5); // Adjust the decrement value for faster/slower fade
   }
 
   // Remove fully transparent points
-  while (!opacities.isEmpty() && opacities.get(0) <= 0) {
-    trail.remove(0);
-    opacities.remove(0);
+  while (!opacities.isEmpty() && opacities.get(0) <= 0) { // Remove the first element if it's fully transparent
+    trail.remove(0); // Remove the first element
+    opacities.remove(0); // Remove the first element
   }
 }
 /* The next step is to use the incoming serial data to dictate the position of the sweeping line. */
 
 void serialEvent(Serial SerialPort){
-  String data = SerialPort.readStringUntil('\n');
-  if(data != null){
-    data
-    angle = radians(float(data));
-    println("Recieved angle: " + angle);
+  String data = SerialPort.readStringUntil('\n'); //
+  if(data != null){ // If there is data available then:
+    data = trim(data); //Clean up the data, removing the white spaces
+    angle = radians(float(data)); // Conver the incoming data to a float and then to radians
+    println("Recieved angle: " + angle); // Print the angle to the console
   }
 }
