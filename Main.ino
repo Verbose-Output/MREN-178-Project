@@ -8,7 +8,7 @@ Servo myservo;
 int pos = 0;   
 //Variables for the Ultrasonic Sensor:
 const unsigned int trigPin = 10;
-const unsigned int echoPin = 11; 
+const unsigned int echoPin = 11;
 
 void setup() {
   pinMode(trigPin, OUTPUT);
