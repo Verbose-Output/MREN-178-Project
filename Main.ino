@@ -1,5 +1,5 @@
 #include <Servo.h>
-#include "Queue.h"
+//#include "Queue.h"
 
 // create servo object to control a servo
 Servo myservo;  
@@ -22,14 +22,16 @@ void setup() {
 void loop() {
   for (pos = 0; pos <= 180; pos += 1) { 
     // in steps of 1 degree
-    myservo.write(pos);              
-    delay(15);                       
-  }
+    myservo.write(pos);
+    Serial.print(pos);      
+    delay(20);                       
+  }//The way the two for loops are written, there will be duplicate values of pos at the end of the loop
   for (pos = 180; pos >= 0; pos -= 1) { 
-    myservo.write(pos);              
-    delay(15);                       
+    myservo.write(pos);
+    Serial.print(pos);          
+    delay(20);                       
   }
-  delay(5);
+  delay(10);
 }
 
 int calculateDistance(){

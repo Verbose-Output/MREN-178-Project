@@ -1,12 +1,18 @@
-int lineLength = 600;
+import processing.serial.*;
 
+Serial SerialPort;
+int lineLength = 600;
 ArrayList<PVector> trail = new ArrayList<>();  // Creates a dynamic array that data of type "PVector" which is a built in class in java/pocessing
 ArrayList<Float> opacities = new ArrayList<>();  // Stores their opacities
 
 float x;
 float y;
+float angle;
 
 void setup() {
+  printArray(Serial.list());
+  SerialPort = new Serial(this, Serial.list()[2], 9600); // Open the port that the Arduino is on
+  myport.bufferUntil('\n'); // Sread line by line
   size(800, 600);
   background(0);
 }
@@ -37,7 +43,7 @@ void drawRadar() {
   line(0, 0, lineLength*cos(PI/6), -lineLength*sin(PI/6));
 
   // Calculate current sweeping line position
-  float angle = radians(frameCount % 360);
+  //float angle = radians(frameCount % 360);
   if(angle < PI){
     float x = lineLength * cos(angle);
     float y = -lineLength * sin(angle);
@@ -75,9 +81,14 @@ void drawRadar() {
     trail.remove(0);
     opacities.remove(0);
   }
+}
+/* The next step is to use the incoming serial data to dictate the position of the sweeping line. */
 
-  // Draw the main sweeping line
-  //stroke(0, 255, 0);
-  //strokeWeight(2);
-  //line(0, 0, x, y);
+void serialEvent(Serial SerialPort){
+  String data = SerialPort.readStringUntil('\n');
+  if(data != null){
+    data
+    angle = radians(float(data));
+    println("Recieved angle: " + angle);
+  }
 }
