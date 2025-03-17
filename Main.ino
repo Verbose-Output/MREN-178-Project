@@ -1,4 +1,4 @@
-#include <Servo.h>
+#include <servo.h>
 #include "Queue.h"
 
 #define TRIGGER = 1;
@@ -30,33 +30,7 @@ void setup() {
 
 void loop() {
   for (pos = 0; pos <= 180; pos += 1) { 
-    myservo.write(pos);
-    // Clears the trigPin
-    digitalWrite(trigPin, LOW);
-    delayMicroseconds(2);
-  
-    // Sets the trigPin on HIGH state for 10 micro seconds
-    digitalWrite(trigPin, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(trigPin, LOW);
-  
-    // Reads the echoPin, returns the sound wave travel time in microseconds
-    duration = pulseIn(echoPin, HIGH);
-  
-    // Calculating the distance
-    distance = duration * 0.034 / 2;
-  
-    // Prints the distance on the Serial Monitor
-    Serial.print("Distance: ");
-    Serial.println(distance);  
-    
-    //Queues distance reading
-    enqueue(distance);
-
-    //print angle
-    serial.println(pos);
-
-    delay(15);                       
+    rotateRead(pos);                    
   }
 
   for(int i = 0; i<45; i++){
@@ -67,40 +41,16 @@ void loop() {
   }
 
   for (pos = 180; pos >= 0; pos -= 1) { 
-    myservo.write(pos);
-    // Clears the trigPin
-    digitalWrite(trigPin, LOW);
-    delayMicroseconds(2);
-  
-    // Sets the trigPin on HIGH state for 10 micro seconds
-    digitalWrite(trigPin, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(trigPin, LOW);
-  
-    // Reads the echoPin, returns the sound wave travel time in microseconds
-    duration = pulseIn(echoPin, HIGH);
-  
-    // Calculating the distance
-    distance = duration * 0.034 / 2;
-  
-    // Prints the distance on the Serial Monitor
-    Serial.print("Distance: ");
-    Serial.println(distance);  
-    
-    //Queues distance reading
-    enqueue(distance);
+    rotateRead(pos);                    
+  }
 
-    //print angle
-    serial.println(pos);
-
-
-    delay(15);                       
+  for(int i = 0; i<45; i++){
+    int k = dequeueAvg();
+    if (k > TRIGGER){
+      serial.println(k);
+    }
   }
 }
-  
-  for(int i = 0; i<45; i++){
-    serial.println(dequeueAvg());
-  }
 
 int cacluateDistance(){
   digitalWrite(trigPin, LOW);
@@ -109,4 +59,18 @@ int cacluateDistance(){
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
   return pulseIn(echoPin, HIGH) * 0.034 / 2;
+}
+
+void rotateRead(int pos){
+  myservo.write(pos);
+    
+  distance = cacluateDistance(); 
+  
+  //Queues distance reading
+  enqueue(distance);
+
+  //print angle
+  serial.println(pos);
+
+  delay(15);      
 }
