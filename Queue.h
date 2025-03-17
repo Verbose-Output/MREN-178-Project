@@ -42,3 +42,11 @@ int dequeue(){
     return range_data;
   }
 }
+
+int dequeueAvg(){
+  int sum = 0;
+  for(int i = 0; i<5; i++){
+    sum += dequeue();
+  }
+  return (sum/5);
+}

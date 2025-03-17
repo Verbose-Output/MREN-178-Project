@@ -97,10 +97,10 @@ void loop() {
     delay(15);                       
   }
 }
-
-for(int i = 0; i<45; i++){
-  serial.println(dequeueAvg());
-}
+  
+  for(int i = 0; i<45; i++){
+    serial.println(dequeueAvg());
+  }
 
 int cacluateDistance(){
   digitalWrite(trigPin, LOW);
