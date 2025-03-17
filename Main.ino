@@ -1,7 +1,7 @@
-#include <servo.h>
+#include <Servo.h>
 #include "Queue.h"
 
-#define TRIGGER = 1;
+#define TRIGGER 1;
 
 // create servo object to control a servo
 Servo myservo;  
@@ -23,8 +23,6 @@ void setup() {
   pinMode(trigPin, OUTPUT); 
   pinMode(echoPin, INPUT); 
   Serial.begin(9600); 
-  myservo.attach(2);
-  Serial.begin(9600);
   delay(5000);
 }
 
@@ -35,8 +33,8 @@ void loop() {
 
   for(int i = 0; i<45; i++){
     int k = dequeueAvg();
-    if (k > TRIGGER){
-      serial.println(k);
+    if (k > 1){
+      Serial.println(k);
     }
   }
 
@@ -46,8 +44,8 @@ void loop() {
 
   for(int i = 0; i<45; i++){
     int k = dequeueAvg();
-    if (k > TRIGGER){
-      serial.println(k);
+    if (k > 1){
+      Serial.println(k);
     }
   }
 }
@@ -70,7 +68,7 @@ void rotateRead(int pos){
   enqueue(distance);
 
   //print angle
-  serial.println(pos);
+  //Serial.println(pos);
 
   delay(15);      
 }
