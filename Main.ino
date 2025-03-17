@@ -1,4 +1,4 @@
-#include <servo.h>
+#include <Servo.h>
 #include "Queue.h"
 
 #define TRIGGER = 1;
