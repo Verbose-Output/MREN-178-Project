@@ -31,23 +31,13 @@ void loop() {
     rotateRead(pos);                    
   }
 
-  for(int i = 0; i<45; i++){
-    int k = dequeueAvg();
-    if (k > 1){
-      Serial.println(k);
-    }
-  }
+
 
   for (pos = 180; pos >= 0; pos -= 1) { 
     rotateRead(pos);                    
   }
 
-  for(int i = 0; i<45; i++){
-    int k = dequeueAvg();
-    if (k > 1){
-      Serial.println(k);
-    }
-  }
+  
 }
 
 int cacluateDistance(){
@@ -65,10 +55,24 @@ void rotateRead(int pos){
   distance = cacluateDistance(); 
   
   //Queues distance reading
-  enqueue(distance);
+  enqueue(distance, pos);
 
   //print angle
   //Serial.println(pos);
 
   delay(15);      
+}
+
+void printData(){
+  for(int i = 0; i<45; i++){
+    Temp* temp = dequeueAvg();
+    int pos1 = temp->pos1;
+    int pos2 = temp->pos2;
+    int avg = temp->avg;
+
+    if(1){
+      Serial.println("MARK PRINT LINE STATEMENT GOES HERE");
+    }
+    free(temp);
+  }
 }
