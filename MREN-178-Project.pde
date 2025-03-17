@@ -11,7 +11,7 @@ float angle;
 
 void setup() {
   printArray(Serial.list());
-  SerialPort = new Serial(this, Serial.list()[2], 9600); // Open the port that the Arduino is on
+  SerialPort = new Serial(this, Serial.list()[0], 9600); // Open the port that the Arduino is on
   SerialPort.bufferUntil('\n'); // Sread line by line
   size(800, 600);
   background(0);

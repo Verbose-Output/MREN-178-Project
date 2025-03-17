@@ -101,3 +101,12 @@ void loop() {
 for(int i = 0; i<45; i++){
   serial.println(dequeueAvg());
 }
+
+int cacluateDistance(){
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  return pulseIn(echoPin, HIGH) * 0.034 / 2;
+}
