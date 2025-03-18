@@ -12,7 +12,7 @@ float angle;
 void setup() {
   printArray(Serial.list());
   SerialPort = new Serial(this, Serial.list()[0], 9600); // Open the port that the Arduino is on
-  SerialPort.bufferUntil('\n'); // Sread line by line
+  SerialPort.bufferUntil('\n'); // Sreal read line by line
   size(800, 600);
   background(0);
 }
@@ -88,7 +88,9 @@ void serialEvent(Serial SerialPort){
   String data = SerialPort.readStringUntil('\n'); //
   if(data != null){ // If there is data available then:
     data = trim(data); //Clean up the data, removing the white spaces
-    angle = radians(float(data)); // Conver the incoming data to a float and then to radians
+    String[] list = split(data, ","); // Split the data into an array of strings
+    angle = radians(float(list[0])); // Conver the incoming data to a float and then to radians
+    //angle = radians(float(data)); // Conver the incoming data to a float and then to radians
     println("Recieved angle: " + angle); // Print the angle to the console
   }
 }

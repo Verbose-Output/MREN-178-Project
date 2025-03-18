@@ -30,14 +30,9 @@ void loop() {
   for (pos = 0; pos <= 180; pos += 1) { 
     rotateRead(pos);                    
   }
-
-
-
   for (pos = 180; pos >= 0; pos -= 1) { 
     rotateRead(pos);                    
   }
-
-  
 }
 
 int cacluateDistance(){
@@ -51,15 +46,11 @@ int cacluateDistance(){
 
 void rotateRead(int pos){
   myservo.write(pos);
-    
   distance = cacluateDistance(); 
-  
   //Queues distance reading
   enqueue(distance, pos);
-
   //print angle
   //Serial.println(pos);
-
   delay(15);      
 }
 
@@ -71,7 +62,7 @@ void printData(){
     int avg = temp->avg;
 
     if(1){
-      Serial.println("MARK PRINT LINE STATEMENT GOES HERE");
+      Serial.println("%d,%d,%d,%d\n", pos, pos1, pos2, avg); //Using Comma Serparated Values for easy parsing
     }
     free(temp);
   }
