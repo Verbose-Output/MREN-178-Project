@@ -88,8 +88,8 @@ void serialEvent(Serial SerialPort){
   String data = SerialPort.readStringUntil('\n'); //
   if(data != null){ // If there is data available then:
     data = trim(data); //Clean up the data, removing the white spaces
-    String[] list = split(data, ","); // Split the data into an array of strings
-    angle = radians(float(list[0])); // Conver the incoming data to a float and then to radians
+    String[] input = split(data, ","); // Split the data into an array of strings
+    angle = radians(float(input[0])); // Conver the incoming data to a float and then to radians
     //angle = radians(float(data)); // Conver the incoming data to a float and then to radians
     println("Recieved angle: " + angle); // Print the angle to the console
   }
