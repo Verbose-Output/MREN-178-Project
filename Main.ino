@@ -64,7 +64,13 @@ void printData(){
     int avg = temp->avg;
 
     if(1){
-      Serial.println("%d,%d,%d,%d\n", pos, pos1, pos2, avg); //Using Comma Serparated Values for easy parsing
+      Serial.print(pos);
+      Serial.print(",");
+      Serial.print(pos1);
+      Serial.print(",");
+      Serial.print(pos2);
+      Serial.print(",");
+      Serial.println(avg); //Using Comma Serparated Values for easy parsing
     }
     free(temp);
   }
