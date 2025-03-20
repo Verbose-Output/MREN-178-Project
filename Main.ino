@@ -7,7 +7,7 @@
 Servo myservo;  
 
 // variable to store the servo position
-int pos = 0;    
+//int pos = 0;    
 
 //range finder
 const int trigPin = 9;
