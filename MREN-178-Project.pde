@@ -91,6 +91,9 @@ void serialEvent(Serial SerialPort){
     String[] input = split(data, ","); // Split the data into an array of strings
     angle = radians(float(input[0])); // Conver the incoming data to a float and then to radians
     //angle = radians(float(data)); // Conver the incoming data to a float and then to radians
-    println("Recieved angle: " + angle); // Print the angle to the console
+    println("Recieved servo angle: " + angle);
+    println("Recived pos1: " + input[1]);
+    println("Recived pos2: " + input[2]);
+    println("recived Avg: "+ input[3]); // Print the angle to the console
   }
 }
