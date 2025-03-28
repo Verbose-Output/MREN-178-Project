@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define SIZE 4
+#define SIZE 2
 
 typedef enum {
   SUCCESS = 0,
@@ -10,7 +10,7 @@ typedef enum {
 
 //Node Declaration
 typedef struct node{
-  int range_data;
+  float range_data;
   int pos;
 } Node;
 
@@ -20,7 +20,7 @@ int front = -1;
 int back = 0;
 
 typedef struct temp{
-  int avg;
+  float avg;
   int pos1;
   int pos2;
 } Temp;
@@ -33,7 +33,7 @@ bool isEmpty(){
   return (front == -1 || front == back);
 }
 
-int enqueue(int reading, int pos) {
+int enqueue(float reading, int pos) {
     if(isFull()) return ERR;
     
     Buffer[back] = (Node*)malloc(sizeof(Node));

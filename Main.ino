@@ -13,7 +13,7 @@ int pos = 0;
 const int trigPin = 9;
 const int echoPin = 10;
 
-int distance;
+float distance;
 long duration;
 
 void setup() {
@@ -37,13 +37,15 @@ void setup() {
 
 void loop() {
   for (pos = 0; pos <= 180; pos += 1) {
+    //Serial.print(pos);
     rotateRead(pos);  
     if(isFull()){
       printData();
-      }                  
+    }                  
   }
 
   for (pos = 180; pos >= 0; pos -= 1) {
+    //Serial.print(pos);
     rotateRead(pos);
     if(isFull()){
       printData();
@@ -51,7 +53,7 @@ void loop() {
   }
 }
 
-int calculateDistance(){
+float calculateDistance(){
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
@@ -67,7 +69,7 @@ void rotateRead(int pos){
   enqueue(distance, pos);
   //print angle
   //Serial.println(pos);
-  delay(15);      
+  delay(10);      
 }
 
 void printData(){
@@ -79,7 +81,11 @@ void printData(){
   // Remove unnecessary if statement and use proper formatting
   Serial.print(pos);
   Serial.print(",");
-  Serial.println(avg);
+  if(avg <= 100){
+    Serial.println(avg);
+  }else{
+    Serial.println("0");
+  }
   
   free(temp);
 }
