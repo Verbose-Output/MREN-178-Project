@@ -1,13 +1,24 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <bool.h>
 
+#define SIZE 5;
 
-//Node Declaration 
+typedef enum {
+  SUCCESS = 0,
+  ERROR = 1
+} Status;
+
+//Node Declaration
 typedef struct node{
   int range_data;
   int pos;
-  struct node* next;
 } Node;
+
+Node *buffer[SIZE];
+
+int front = -1;
+int back = 0;
 
 typedef struct temp{
   int avg;
@@ -15,54 +26,59 @@ typedef struct temp{
   int pos2;
 } Temp;
 
-Node *front = NULL;
-Node *back = NULL;
+bool isFull(){
+  return (back + 1) % SIZE == front;
+}
 
-void enqueue(int reading, int pos){
-  Node *temp = (Node*)malloc(sizeof(Node));
-  temp->range_data = reading;
-  temp->pos = pos;
-  if(front == NULL){
-    front = temp;
-    temp->next = NULL;
-    back = temp;
+bool isEmpty(){
+  return (front == -1 || front == back);
+}
+
+int enqueue(int reading, int pos){
+
+  if(isFull()){
+    return ERROR;
   }
-  else{
-    back->next = temp;
-    temp->next = NULL;
-    back = temp;
+  buffer[back]->pos = pos;
+  buffer[back]->range_data = reading;
+  if(front == -1){
+    front == 0;
+    return SUCCESS;
   }
+  else
+  back = (back + 1) % SIZE;
+  
+  return SUCCESS;
 }
 
 Node* dequeue(){
-  if(front == back){
-    int range_data = front->range_data;
-    Node *temp = front;
-    front = NULL;
-    back = NULL;
-    return temp;
+  if(isEmpty()){
+    return ERROR;
+  }
+  Node *temp = buffer[front];
+  if(front == back -1){
+    front = -1;
+    back = 0;
   }
   else{
-    int range_data = front->range_data;
-    Node *temp = front;
-    front = front->next;
-    return temp;
+    front = (front + 1) % SIZE;
   }
 }
 
 Temp* dequeueAvg(){
-  Temp *temp = (Temp*)malloc(sizeof(Temp));
-  for(int i = 0; i < 5; i++){
+  int count = 0;
+  Temp *temp = malloc(sizeof(Temp));
+  while(!isEmpty()){
     Node *temp2 = dequeue();
-    if(i == 0){
+    if(count = 0){
       temp->pos1 = temp2->pos;
     }
-    if(i == 4){
+    if(isEmpty()){
       temp->pos2 = temp2->pos;
     }
-    temp->avg += temp2->range_data;
-    free(temp2);
+    temp->avg = temp2->range_data;
+    count += 1;
   }
-  temp->avg = ((temp->avg)/5);
-  return temp;
+  temp->avg = avg/count;
+  return temp; 
 }

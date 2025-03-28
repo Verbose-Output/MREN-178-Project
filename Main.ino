@@ -7,7 +7,7 @@
 Servo myservo;  
 
 // variable to store the servo position
-//int pos = 0;    
+int pos = 0;    
 
 //range finder
 const int trigPin = 9;
@@ -20,20 +20,25 @@ void setup() {
   // attaches the servo on pin 2 to the servo object
   myservo.attach(2);  
   //pinmode for range finder
-  pinMode(trigPin, OUTPUT); 
-  pinMode(echoPin, INPUT); 
-  Serial.begin(9600); 
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  Serial.begin(9600);
   delay(5000);
 }
 
 void loop() {
-  for(int pos = 0; pos <= 180; pos += 1) { 
-    rotateRead(pos);
-    printData();                   
+  for (int pos = 0; pos <= 180; pos += 1) {
+    rotateRead(pos);  
+    if(isFull()){
+      printData();
+      }                  
   }
-  for(int pos = 180; pos >= 0; pos -= 1) { 
-    rotateRead(pos);             
-    printData();       
+
+  for (int pos = 180; pos >= 0; pos -= 1) {
+    rotateRead(pos);
+    if(isFull()){
+      printData();
+    }                    
   }
 }
 
@@ -48,7 +53,7 @@ int cacluateDistance(){
 
 void rotateRead(int pos){
   myservo.write(pos);
-  distance = cacluateDistance(); 
+  distance = cacluateDistance();
   //Queues distance reading
   enqueue(distance, pos);
   //print angle
@@ -57,21 +62,12 @@ void rotateRead(int pos){
 }
 
 void printData(){
-  for(int i = 0; i<45; i++){
-    Temp* temp = dequeueAvg();
-    int pos1 = temp->pos1;
-    int pos2 = temp->pos2;
-    int avg = temp->avg;
-
-    if(1){
-      Serial.print(pos);
-      Serial.print(",");
-      Serial.print(pos1);
-      Serial.print(",");
-      Serial.print(pos2);
-      Serial.print(",");
-      Serial.println(avg); //Using Comma Serparated Values for easy parsing
-    }
-    free(temp);
+  Temp* temp = dequeueAvg();
+  int pos1 = temp->pos1;
+  int pos2 = temp->pos2;
+  int avg = temp->avg;
+  if(1){
+    Serial.println("%d,%d,%d,%d\n", pos, pos1, pos2, avg); //Using Comma Serparated Values for easy parsing
   }
+  free(temp);
 }

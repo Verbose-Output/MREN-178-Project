@@ -8,6 +8,11 @@ ArrayList<Float> opacities = new ArrayList<>();  // Stores their opacities
 float x;
 float y;
 float angle;
+float objectAngle = 0; // Angle of the object
+float objectDistance = 0; // Distance of the object
+int objectStart;
+int objectEnd; // The distance of the object from the radar
+int objectAvg; // The average of the two objects
 
 void setup() {
   printArray(Serial.list());
@@ -89,11 +94,17 @@ void serialEvent(Serial SerialPort){
   if(data != null){ // If there is data available then:
     data = trim(data); //Clean up the data, removing the white spaces
     String[] input = split(data, ","); // Split the data into an array of strings
-    angle = radians(float(input[0])); // Conver the incoming data to a float and then to radians
+    angle = radians(float(input[0])); // Convert the incoming data to a float and then to radians
     //angle = radians(float(data)); // Conver the incoming data to a float and then to radians
+    
     println("Recieved servo angle: " + angle);
-    println("Recived pos1: " + input[1]);
-    println("Recived pos2: " + input[2]);
-    println("recived Avg: "+ input[3]); // Print the angle to the console
+    println("Recived object start: " + input[1]);
+    println("Recived object end: " + input[2]);
+    println("Recived Avg: "+ input[3]); // Print the angle to the console
   }
 }
+
+//Input 0 is angle of the pos
+//Input 1 is the object start
+//Input 2 is the object end
+//Input 3 is the middle of two objects
