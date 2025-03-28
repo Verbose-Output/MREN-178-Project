@@ -22,19 +22,28 @@ void setup() {
   //pinmode for range finder
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
-  Serial.begin(9600);
-  delay(5000);
+  Serial.begin(115200);
+    // 🔴 WAIT UNTIL '0' IS RECEIVED FROM PROCESSING 🔴
+  while (true) {
+    if (Serial.available() > 0) {
+      char command = Serial.read();
+      if (command == '0') {
+        break;  // Exit loop when '0' is received
+      }
+    }
+  }
+  // delay(5000);
 }
 
 void loop() {
-  for (int pos = 0; pos <= 180; pos += 1) {
+  for (pos = 0; pos <= 180; pos += 1) {
     rotateRead(pos);  
     if(isFull()){
       printData();
       }                  
   }
 
-  for (int pos = 180; pos >= 0; pos -= 1) {
+  for (pos = 180; pos >= 0; pos -= 1) {
     rotateRead(pos);
     if(isFull()){
       printData();
@@ -42,7 +51,7 @@ void loop() {
   }
 }
 
-int cacluateDistance(){
+int calculateDistance(){
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
@@ -53,7 +62,7 @@ int cacluateDistance(){
 
 void rotateRead(int pos){
   myservo.write(pos);
-  distance = cacluateDistance();
+  distance = calculateDistance();
   //Queues distance reading
   enqueue(distance, pos);
   //print angle
@@ -63,11 +72,14 @@ void rotateRead(int pos){
 
 void printData(){
   Temp* temp = dequeueAvg();
-  int pos1 = temp->pos1;
-  int pos2 = temp->pos2;
+  // int pos1 = temp->pos1;
+  // int pos2 = temp->pos2;
   int avg = temp->avg;
-  if(1){
-    Serial.println("%d,%d,%d,%d\n", pos, pos1, pos2, avg); //Using Comma Serparated Values for easy parsing
-  }
+  
+  // Remove unnecessary if statement and use proper formatting
+  Serial.print(pos);
+  Serial.print(",");
+  Serial.println(avg);
+  
   free(temp);
 }

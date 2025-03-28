@@ -16,7 +16,7 @@ int objectAvg; // The average of the two objects
 
 void setup() {
   printArray(Serial.list());
-  SerialPort = new Serial(this, Serial.list()[0], 9600); // Open the port that the Arduino is on
+  SerialPort = new Serial(this, Serial.list()[2], 9600); // Open the port that the Arduino is on
   SerialPort.bufferUntil('\n'); // Sreal read line by line
   size(800, 600);
   background(0);
@@ -93,14 +93,13 @@ void serialEvent(Serial SerialPort){
   String data = SerialPort.readStringUntil('\n'); //
   if(data != null){ // If there is data available then:
     data = trim(data); //Clean up the data, removing the white spaces
+    println(data);
     String[] input = split(data, ","); // Split the data into an array of strings
     angle = radians(float(input[0])); // Convert the incoming data to a float and then to radians
     //angle = radians(float(data)); // Conver the incoming data to a float and then to radians
-    
-    println("Recieved servo angle: " + angle);
-    println("Recived object start: " + input[1]);
-    println("Recived object end: " + input[2]);
-    println("Recived Avg: "+ input[3]); // Print the angle to the console
+    objectDistance = float(input[1]); // The distance of the object from the radar
+    //println("Recieved servo angle: " + angle);
+    //println("Recived Avg: "+ objectDistance); // Print the angle to the console
   }
 }
 
