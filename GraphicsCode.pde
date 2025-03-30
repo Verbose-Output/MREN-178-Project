@@ -49,7 +49,7 @@ void draw(){
   
   drawRadar();
   drawObject(); // Draw the object on the radar
-  // delay(10); // Adjust delay for smoother effect
+  void keyPressed();
 }
 
 void drawRadar() {
@@ -175,6 +175,12 @@ void serialEvent(Serial SerialPort){
     objectDistance = float(input[1]); // The distance of the object from the radar
     //println("Recieved servo angle: " + angle);
     //println("Recived Avg: "+ objectDistance); // Print the angle to the console
+  }
+}
+
+void keyPressed() {
+  if (key == 'c') {
+    detectedObjects.clear(); // Wipe all objects
   }
 }
 
