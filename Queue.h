@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define SIZE 2
+#define SIZE 5
 
 typedef enum {
   SUCCESS = 0,
@@ -61,25 +61,42 @@ Node* dequeue() {
 }
 
 
-Temp* dequeueAvg(){
-  int count = 0;
-  Temp *temp = (Temp*)malloc(sizeof(Temp));
-  while(!isEmpty()){
-    Node *temp2 = dequeue();
-    if(count == 0){
-      temp->pos1 = temp2->pos;
-    }
-    if(isEmpty()){
-      temp->pos2 = temp2->pos;
-    }
-    temp->avg = temp2->range_data;
-    count += 1;
-    free(temp2);
+Temp* dequeueAvg() {
+  if (isEmpty()) {
+    return NULL;
   }
-  temp->avg = temp->avg/count;
-  if(count == 0){
+
+  Temp *temp = (Temp*)malloc(sizeof(Temp));
+  if (!temp) {
+    return NULL;  // Handle malloc failure
+  }
+
+  float sum = 0.0f;
+  int count = 0;
+  int first_pos = -1;
+  int last_pos = -1;
+
+  while (!isEmpty()) {
+    Node *temp2 = dequeue();
+    if (temp2) {
+      if (count == 0) {
+        first_pos = temp2->pos;  // Track first position
+      }
+      last_pos = temp2->pos;     // Track last position
+      sum += temp2->range_data;  // Accumulate sum
+      count++;
+      free(temp2);
+    }
+  }
+
+  if (count == 0) {
     free(temp);
     return NULL;
   }
-  return temp; 
+
+  temp->avg = sum / count;  // Correct average calculation
+  temp->pos1 = first_pos;
+  temp->pos2 = last_pos;
+
+  return temp;
 }

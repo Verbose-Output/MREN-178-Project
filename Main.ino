@@ -1,7 +1,7 @@
 #include <Servo.h>
 #include "Queue.h"
 
-#define TRIGGER 1;
+//#define TRIGGER 1;
 
 // create servo object to control a servo
 Servo myservo;  
@@ -12,7 +12,7 @@ int pos = 0;
 //range finder
 const int trigPin = 9;
 const int echoPin = 10;
-
+const unsigned int Size = 5;
 float distance;
 long duration;
 
@@ -32,24 +32,64 @@ void setup() {
       }
     }
   }
-  // delay(5000);
 }
 
+
 void loop() {
-  for (pos = 0; pos <= 180; pos += 1) {
-    //Serial.print(pos);
-    rotateRead(pos);  
-    if(isFull()){
-      printData();
-    }                  
+  for (pos = 0; pos <= 180; pos++) {
+    myservo.write(pos);  // Move servo to `pos`
+    delay(20);  // Let servo settle
+    
+    // Take 5 readings (or more) per position
+    for (int i = 0; i < SIZE; i++) {  
+      distance = calculateDistance();
+      enqueue(distance, pos);
+      delay(10);  // Small delay between readings
+    }
+
+    // Print position & average (if available)
+    Serial.print(pos);
+    Serial.print(",");
+    
+    if (isFull()) {
+      Temp* temp = dequeueAvg();
+      if(temp->avg < 50){
+        Serial.println(temp->avg);
+      }else{
+        Serial.println("0");
+      }
+      free(temp);
+    } else {
+      // Should never happen since we enqueue 5 readings per pos
+      Serial.println("ERROR: Queue not full");
+    }
   }
 
-  for (pos = 180; pos >= 0; pos -= 1) {
-    //Serial.print(pos);
-    rotateRead(pos);
-    if(isFull()){
-      printData();
-    }                    
+  // Repeat for reverse sweep (180 → 0)
+  for (pos = 180; pos >= 0; pos--) {
+    myservo.write(pos);
+    delay(20);
+    
+    for (int i = 0; i < SIZE; i++) {
+      distance = calculateDistance();
+      enqueue(distance, pos);
+      delay(10);
+    }
+
+    Serial.print(pos);
+    Serial.print(",");
+    
+    if (isFull()) {
+      Temp* temp = dequeueAvg();
+      if(temp->avg < 50){
+        Serial.println(temp->avg);
+      }else{
+        Serial.println("0");
+      }
+      free(temp);
+    } else {
+      Serial.println("ERROR: Queue not full");
+    }
   }
 }
 
@@ -59,33 +99,9 @@ float calculateDistance(){
   digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
-  return pulseIn(echoPin, HIGH) * 0.034 / 2;
-}
 
-void rotateRead(int pos){
-  myservo.write(pos);
-  distance = calculateDistance();
-  //Queues distance reading
-  enqueue(distance, pos);
-  //print angle
-  //Serial.println(pos);
-  delay(10);      
-}
-
-void printData(){
-  Temp* temp = dequeueAvg();
-  // int pos1 = temp->pos1;
-  // int pos2 = temp->pos2;
-  int avg = temp->avg;
-  
-  // Remove unnecessary if statement and use proper formatting
-  Serial.print(pos);
-  Serial.print(",");
-  if(avg <= 100){
-    Serial.println(avg);
-  }else{
-    Serial.println("0");
-  }
-  
-  free(temp);
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration*.0343)/2;
+  return distance;
+  delay(10);
 }

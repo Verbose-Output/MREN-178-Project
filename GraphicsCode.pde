@@ -1,22 +1,37 @@
 import processing.serial.*;
 
 Serial SerialPort;
+
 int lineLength = 600;
+
 ArrayList<PVector> trail = new ArrayList<>();  // Creates a dynamic array that data of type "PVector" which is a built in class in java/pocessing
 ArrayList<Float> opacities = new ArrayList<>();  // Stores their opacities
+ArrayList<PVector> detectedObjects = new ArrayList<>(); //Sotres object positions
+ArrayList<Float> objectOpacities = new ArrayList<>(); // To store opacity for fading effect
+ArrayList<Float> objectTimestamps = new ArrayList<>(); // To store the time each object was detected
+
+//TODO: use duration limit for distance sensor calclation
 
 float x;
 float y;
 float angle;
 float objectAngle; // Angle of the object
 float objectDistance; // Distance of the object
-int objectStart;
-int objectEnd; // The distance of the object from the radar
-int objectAvg; // The average of the two objects
+
+float logDistance;
+float distance1;
+float distance2;
+
+boolean object1 = false;
+boolean object2 = false;
+
+float objectMiddleAngle;
+float angle1;
+float angle2;
 
 void setup() {
   printArray(Serial.list());
-  SerialPort = new Serial(this, Serial.list()[2], 115200); // Open the port that the Arduino is on
+  SerialPort = new Serial(this, Serial.list()[0], 115200); // Open the port that the Arduino is on
   SerialPort.bufferUntil('\n'); // Sreal read line by line
   delay(3000); // Wait for the serial connection to establish
    // Wait for the serial connection to establish
@@ -34,7 +49,7 @@ void draw(){
   
   drawRadar();
   drawObject(); // Draw the object on the radar
-  delay(10); // Adjust delay for smoother effect
+  // delay(10); // Adjust delay for smoother effect
 }
 
 void drawRadar() {
@@ -95,14 +110,59 @@ void drawRadar() {
 /* The next step is to use the incoming serial data to dictate the position of the sweeping line. */
 
 void drawObject(){
-  if(objectDistance > 0){// Map the distance to the radar radius
-    float rx = map(objectDistance, 0, 100, 0, 1200); // Map the distance to the radar radius
-    float ry = map(objectDistance, 0, 100, 0, 600); // Map the distance to the radar radius
-    float objX = rx * cos(angle); // Calculate the x position of the object
-    float objY = -ry * sin(angle); // Calculate the y position of the object
-    stroke(255, 0, 0); // Set the stroke color to red
-    fill(255, 0, 0); // Set the fill color to red
-    ellipse(objX, objY, 10, 10); // Draw the object as a small circle
+  // if(objectDistance > 0){// Map the distance to the radar radius
+  //   objectDistance = map(objectDistance, 0, 50, 0, 600); // Map the distance to the radar radius
+  //   if(objectDistance > 0 && objectDistance < 1200){
+  //     float objX = objectDistance * cos(angle); // Calculate the x position of the object
+  //     float objY = objectDistance * -sin(angle); // Calculate the y position of the object
+  //     stroke(255, 0, 0); // Set the stroke color to red
+  //     fill(255, 0, 0); // Set the fill color to red
+  //     ellipse(objX, objY, 10, 10); // Draw the object as a small circle
+  //   }
+  // }
+
+  // Detect object start
+  if (!object1 && objectDistance > 0 && objectDistance <= 50) {
+    distance1 = objectDistance;
+    angle1 = angle;  // Store as float for precision
+    object1 = true;
+    //println("Start angle: " + angle1);
+  } 
+  // Detect object end
+  else if (object1 && !object2 && objectDistance <= 0) {
+    distance2 = distance1;  // Use last valid distance (or compute avg if needed)
+    angle2 = angle;
+    object2 = true;
+    //println("End angle: " + angle2);
+  }
+
+  // Compute middle and draw
+  if (object1 && object2) {
+
+    objectMiddleAngle = (angle1 + angle2) / 2;
+    logDistance = (distance1 + distance2) / 2;
+
+    // Use distance1 (or average if multiple readings)
+    logDistance = map(logDistance, 0, 50, 0, 600);
+
+    // Draw the middle of the object
+    if (logDistance > 0 && logDistance < 600) {
+      float objX = logDistance * cos(objectMiddleAngle);  // Convert to radians
+      float objY = logDistance * -sin(objectMiddleAngle);
+      stroke(255, 0, 0);
+      fill(255, 0, 0);
+      ellipse(objX, objY, 10, 10);
+      detectedObjects.add(new PVector(objX, objY));
+    }
+
+    // Reset for next object
+    object1 = false;
+    object2 = false;
+  }
+  for (PVector obj : detectedObjects) {
+    stroke(255, 0, 0);
+    fill(255, 0, 0);
+    ellipse(obj.x, obj.y, 10, 10);
   }
 }
 
@@ -111,15 +171,12 @@ void serialEvent(Serial SerialPort){
   if(data != null){ // If there is data available then:
     data = trim(data); //Clean up the data, removing the white spaces
     String[] input = split(data, ","); // Split the data into an array of strings
-    angle = radians(float(input[0])); // Convert the incoming data to a float and then to radians
-    //angle = radians(float(data)); // Conver the incoming data to a float and then to radians
+    angle = radians(float(input[0]));
     objectDistance = float(input[1]); // The distance of the object from the radar
-    println("Recieved servo angle: " + angle);
-    println("Recived Avg: "+ objectDistance); // Print the angle to the console
+    //println("Recieved servo angle: " + angle);
+    //println("Recived Avg: "+ objectDistance); // Print the angle to the console
   }
 }
 
-//TODO: Map the length to be 1 meter
-//TODO:bject detection using the method
-// TODO:Seperate pos and of servo and other data in terms of print so that they only print data when necissary
-//TODO: Add distance tags to the radar screen
+// TODO:bject detection using the method
+// TODO: Add distance tags to the radar screen
