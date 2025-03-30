@@ -58,9 +58,9 @@ void draw(){
   drawObject(); 
   //Check is a key is pressed and the correspoinding action, here it is used to clear opbjects
   //keyPressed();
-  if(keyPressed && key == 'c'){
-    detectedObjects.clear();
-  }
+  // if(keyPressed && key == 'c'){
+  //   detectedObjects.clear();
+  // }
 }
 
 void drawRadar() {
@@ -125,56 +125,59 @@ void drawRadar() {
 /* The next step is to use the incoming serial data to dictate the position of the sweeping line. */
 
 void drawObject(){
-  // if(objectDistance > 0){// Map the distance to the radar radius
-  //   objectDistance = map(objectDistance, 0, 50, 0, 600); // Map the distance to the radar radius
-  //   if(objectDistance > 0 && objectDistance < 1200){
-  //     float objX = objectDistance * cos(angle); // Calculate the x position of the object
-  //     float objY = objectDistance * -sin(angle); // Calculate the y position of the object
-  //     stroke(255, 0, 0); // Set the stroke color to red
-  //     fill(255, 0, 0); // Set the fill color to red
-  //     ellipse(objX, objY, 10, 10); // Draw the object as a small circle
-  //   }
-  // }
-
-  // Detect object start
-  if (!object1 && objectDistance > 0 && objectDistance <= 50) {
-    distance1 = objectDistance;
-    angle1 = angle; // Store the start angle
-    object1 = true; // Trigger detection flag
-  } else if (object1 && !object2 && objectDistance <= 0) { // Detect object end
-    distance2 = distance1;  // Use last valid distance //TODO: Fix this!
-    angle2 = angle; // Store end angle
-    object2 = true; // Trigger detection flag
-  }
-  // Compute middle and draw
-  if (object1 && object2) {
-    //Calculate values for the middle of the object
-    objectMiddleAngle = (angle1 + angle2) / 2; //Middle angle
-    logDistance = (distance1 + distance2) / 2; // Middle distance
-    logDistance = map(logDistance, 0, 50, 0, 600); // Scale the distance
-
-    // Draw the middle of the object
-    if (logDistance > 0 && logDistance < 600) {
-      float objX = logDistance * cos(objectMiddleAngle);
-      float objY = logDistance * -sin(objectMiddleAngle);
-      //Represents the object as a red dot
-      stroke(255, 0, 0);
-      fill(255, 0, 0);
-      ellipse(objX, objY, 10, 10);
-      //Add to the list of detected object to allow for clearing later
-      detectedObjects.add(new PVector(objX, objY));
+  // OBJECT POINT TRACING MODE (LEAVE THIS LINE COMMENTED OUT)
+  if(objectDistance > 0){// Map the distance to the radar radius
+    objectDistance = map(objectDistance, 0, 50, 0, 600); // Map the distance to the radar radius
+    if(objectDistance > 0 && objectDistance < 1200){
+      float objX = objectDistance * cos(angle); // Calculate the x position of the object
+      float objY = objectDistance * -sin(angle); // Calculate the y position of the object
+      stroke(255, 0, 0); // Set the stroke color to red
+      fill(255, 0, 0); // Set the fill color to red
+      ellipse(objX, objY, 10, 10); // Draw the object as a small circle
     }
+  }
 
-    // Reset for next object
-    object1 = false;
-    object2 = false;
-  }
-  //Draw all the objects in the list
-  for (PVector obj : detectedObjects) {
-    stroke(255, 0, 0);
-    fill(255, 0, 0);
-    ellipse(obj.x, obj.y, 10, 10);
-  }
+
+  //MIDDLE POINT SINGLE PING OPERATION MODE (LEAVE THIS LINE COMMENTED OUT)
+  // Detect object start
+//   if (!object1 && objectDistance > 0 && objectDistance <= 50) {
+//     distance1 = objectDistance;
+//     angle1 = angle; // Store the start angle
+//     object1 = true; // Trigger detection flag
+//   } else if (object1 && !object2 && objectDistance <= 0) { // Detect object end
+//     distance2 = distance1;  // Use last valid distance //TODO: Fix this!
+//     angle2 = angle; // Store end angle
+//     object2 = true; // Trigger detection flag
+//   }
+//   // Compute middle and draw
+//   if (object1 && object2) {
+//     //Calculate values for the middle of the object
+//     objectMiddleAngle = (angle1 + angle2) / 2; //Middle angle
+//     logDistance = (distance1 + distance2) / 2; // Middle distance
+//     logDistance = map(logDistance, 0, 50, 0, 600); // Scale the distance
+
+//     // Draw the middle of the object
+//     if (logDistance > 0 && logDistance < 600) {
+//       float objX = logDistance * cos(objectMiddleAngle);
+//       float objY = logDistance * -sin(objectMiddleAngle);
+//       //Represents the object as a red dot
+//       stroke(255, 0, 0);
+//       fill(255, 0, 0);
+//       ellipse(objX, objY, 10, 10);
+//       //Add to the list of detected object to allow for clearing later
+//       detectedObjects.add(new PVector(objX, objY));
+//     }
+
+//     // Reset for next object
+//     object1 = false;
+//     object2 = false;
+//   }
+//   //Draw all the objects in the list
+//   for (PVector obj : detectedObjects) {
+//     stroke(255, 0, 0);
+//     fill(255, 0, 0);
+//     ellipse(obj.x, obj.y, 10, 10);
+//   }
 }
 
 // Function that handles recivining sensor data from arduino
