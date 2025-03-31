@@ -33,6 +33,13 @@ float angle2; // that angle of the second/ final edge
 //NOTE: Edge here is classified as the first or last reading before/after the radar reading 0
 // This approach assumes there a noticable gap between subsequent objects
 
+
+// Fading parameters
+float fadeStartTime = 1500; // Start fading after 1.5 seconds
+float fadeDuration = 2000; // Fade over 2 seconds
+float objectLifetime = fadeStartTime + fadeDuration; // Total time before object disappears
+
+
 void setup() {
   //Setup Serial Communication
   printArray(Serial.list());
@@ -57,10 +64,30 @@ void draw(){
   // Draw the object on the radar
   drawObject(); 
   //Check is a key is pressed and the correspoinding action, here it is used to clear opbjects
-  //keyPressed();
-  // if(keyPressed && key == 'c'){
-  //   detectedObjects.clear();
-  // }
+
+  updateObjectFading();
+}
+
+void updateObjectFading() {
+  // Get current time
+  float currentTime = millis();
+  
+  // Iterate backwards through objects to safely remove them
+  for (int i = detectedObjects.size() - 1; i >= 0; i--) {
+    float age = currentTime - objectTimestamps.get(i);
+    
+    if (age > objectLifetime) {
+      // Remove expired objects
+      detectedObjects.remove(i);
+      objectOpacities.remove(i);
+      objectTimestamps.remove(i);
+    } else if (age > fadeStartTime) {
+      // Calculate fade amount (0 to 1)
+      float fadeAmount = (age - fadeStartTime) / fadeDuration;
+      // Update opacity (255 to 0)
+      objectOpacities.set(i, 255 * (1 - fadeAmount));
+    }
+  }
 }
 
 void drawRadar() {
@@ -134,50 +161,60 @@ void drawObject(){
       stroke(255, 0, 0); // Set the stroke color to red
       fill(255, 0, 0); // Set the fill color to red
       ellipse(objX, objY, 10, 10); // Draw the object as a small circle
+      detectedObjects.add(new PVector(objX, objY));
+      objectOpacities.add(255.0);
+      objectTimestamps.add((float)millis());
     }
   }
-
+  for (int i = 0; i < detectedObjects.size(); i++) {
+    PVector obj = detectedObjects.get(i);
+    float opacity = objectOpacities.get(i);
+    
+    stroke(255, 0, 0, opacity);
+    fill(255, 0, 0, opacity);
+    ellipse(obj.x, obj.y, 10, 10);
+  }
 
   //MIDDLE POINT SINGLE PING OPERATION MODE (LEAVE THIS LINE COMMENTED OUT)
   // Detect object start
-//   if (!object1 && objectDistance > 0 && objectDistance <= 50) {
-//     distance1 = objectDistance;
-//     angle1 = angle; // Store the start angle
-//     object1 = true; // Trigger detection flag
-//   } else if (object1 && !object2 && objectDistance <= 0) { // Detect object end
-//     distance2 = distance1;  // Use last valid distance //TODO: Fix this!
-//     angle2 = angle; // Store end angle
-//     object2 = true; // Trigger detection flag
-//   }
-//   // Compute middle and draw
-//   if (object1 && object2) {
-//     //Calculate values for the middle of the object
-//     objectMiddleAngle = (angle1 + angle2) / 2; //Middle angle
-//     logDistance = (distance1 + distance2) / 2; // Middle distance
-//     logDistance = map(logDistance, 0, 50, 0, 600); // Scale the distance
+  // if (!object1 && objectDistance > 0 && objectDistance <= 50) {
+  //   distance1 = objectDistance;
+  //   angle1 = angle; // Store the start angle
+  //   object1 = true; // Trigger detection flag
+  // } else if (object1 && !object2 && objectDistance <= 0) { // Detect object end
+  //   distance2 = distance1;  // Use last valid distance //TODO: Fix this!
+  //   angle2 = angle; // Store end angle
+  //   object2 = true; // Trigger detection flag
+  // }
+  // // Compute middle and draw
+  // if (object1 && object2) {
+  //   //Calculate values for the middle of the object
+  //   objectMiddleAngle = (angle1 + angle2) / 2; //Middle angle
+  //   logDistance = (distance1 + distance2) / 2; // Middle distance
+  //   logDistance = map(logDistance, 0, 50, 0, 600); // Scale the distance
 
-//     // Draw the middle of the object
-//     if (logDistance > 0 && logDistance < 600) {
-//       float objX = logDistance * cos(objectMiddleAngle);
-//       float objY = logDistance * -sin(objectMiddleAngle);
-//       //Represents the object as a red dot
-//       stroke(255, 0, 0);
-//       fill(255, 0, 0);
-//       ellipse(objX, objY, 10, 10);
-//       //Add to the list of detected object to allow for clearing later
-//       detectedObjects.add(new PVector(objX, objY));
-//     }
+  //   // Draw the middle of the object
+  //   if (logDistance > 0 && logDistance < 600) {
+  //     float objX = logDistance * cos(objectMiddleAngle);
+  //     float objY = logDistance * -sin(objectMiddleAngle);
+  //     //Represents the object as a red dot
+  //     stroke(255, 0, 0);
+  //     fill(255, 0, 0);
+  //     ellipse(objX, objY, 10, 10);
+  //     //Add to the list of detected object to allow for clearing later
+  //     detectedObjects.add(new PVector(objX, objY));
+  //   }
 
-//     // Reset for next object
-//     object1 = false;
-//     object2 = false;
-//   }
-//   //Draw all the objects in the list
-//   for (PVector obj : detectedObjects) {
-//     stroke(255, 0, 0);
-//     fill(255, 0, 0);
-//     ellipse(obj.x, obj.y, 10, 10);
-//   }
+  //   // Reset for next object
+  //   object1 = false;
+  //   object2 = false;
+  // }
+  // //Draw all the objects in the list
+  // for (PVector obj : detectedObjects) {
+  //   stroke(255, 0, 0);
+  //   fill(255, 0, 0);
+  //   ellipse(obj.x, obj.y, 10, 10);
+  // }
 }
 
 // Function that handles recivining sensor data from arduino
@@ -198,5 +235,7 @@ void serialEvent(Serial SerialPort){
 void keyPressed() {
   if (key == 'c') {
     detectedObjects.clear(); // Wipe all objects
+    objectOpacities.clear();
+    objectTimestamps.clear();
   }
 }

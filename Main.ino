@@ -104,13 +104,13 @@ float calculateDistance() {
   digitalWrite(trigPin, LOW);
 
   // Measure echo pulse with timeout (e.g., 30ms max)
-  // const unsigned long timeout = 30000; // Max time to wait for echo (µs)
+  const unsigned long timeout = 30000; // Max time to wait for echo (µs)
   duration = pulseIn(echoPin, HIGH, timeout);
 
   // // Check if duration is valid (typical range: 150µs to 25ms for 3cm-4m)
-  // if (duration == 0 || duration > 25000) { 
-  //   return 0; // No echo or out-of-range
-  // }
+  if (duration == 0 || duration > 25000) { 
+    return 0; // No echo or out-of-range
+  }
 
   // Convert to distance (cm)
   distance = (duration * 0.0343) / 2; 
