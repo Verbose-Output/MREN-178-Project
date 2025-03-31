@@ -116,3 +116,4 @@ float calculateDistance() {
   distance = (duration * 0.0343) / 2; 
   return distance;
 }
+

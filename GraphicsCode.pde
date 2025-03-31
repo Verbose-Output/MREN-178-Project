@@ -176,7 +176,7 @@ void drawObject(){
   }
 
   //MIDDLE POINT SINGLE PING OPERATION MODE (LEAVE THIS LINE COMMENTED OUT)
-  // Detect object start
+  //Detect object start
   // if (!object1 && objectDistance > 0 && objectDistance <= 50) {
   //   distance1 = objectDistance;
   //   angle1 = angle; // Store the start angle
@@ -200,7 +200,7 @@ void drawObject(){
   //     //Represents the object as a red dot
   //     stroke(255, 0, 0);
   //     fill(255, 0, 0);
-  //     ellipse(objX, objY, 10, 10);
+  //     ellipse(objX, objY, 10, 10);147
   //     //Add to the list of detected object to allow for clearing later
   //     detectedObjects.add(new PVector(objX, objY));
   //   }
